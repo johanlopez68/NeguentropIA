@@ -4,11 +4,25 @@ import google.generativeai as genai
 # 1. Configuración de página
 st.set_page_config(page_title="NeguentropIA", layout="centered")
 
-# Logo UIS
-try:
-    st.image("logo_uis.png", width=150)
-except:
-    st.warning("Asegúrate de tener 'logo_uis.png' en la misma carpeta que este script.")
+# --- SECCIÓN DE LOGOS ---
+# Creamos dos columnas para poner los logos uno al lado del otro
+col_logo1, col_logo2 = st.columns(2)
+
+# Columna 1: Logo UIS
+with col_logo1:
+    try:
+        st.image("logo_uis.png", width=150)
+    except:
+        st.warning("Asegúrate de tener 'logo_uis.png' en la carpeta.")
+
+# Columna 2: Nuevo Logo NeguentropIA (Asegúrate de guardar la imagen con este nombre)
+with col_logo2:
+    try:
+        # He usado 'logo_neguentropia.png' como nombre de archivo sugerido
+        st.image("logo_neguentropia.png", width=150)
+    except:
+        st.warning("Asegúrate de tener 'logo_neguentropia.png' en la carpeta para verlo aquí.")
+# ------------------------
 
 st.title("NeguentropIA")
 st.subheader("Tutor virtual en habilidades directivas (autoconocimiento)")
@@ -54,7 +68,7 @@ Estructura tu respuesta final fluyendo de forma natural con:
 """
 
 # 4. Inicializar modelo
-modelo = genai.GenerativeModel("gemini-3.5-flash") 
+modelo = genai.GenerativeModel("gemini-1.5-flash") # Usando la versión recomendada y estable
 
 # 5. Gestión del estado de la conversación (onboarding)
 if "messages" not in st.session_state:
@@ -80,7 +94,8 @@ if not st.session_state.perfil_completado:
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.markdown(prompt)
-      # Mensaje de bienvenida ampliado con enfoque en autoconocimiento
+      
+        # Mensaje de bienvenida ampliado con enfoque en autoconocimiento
         mensaje_bienvenida = """¡Un gusto saludarte! Gracias por presentarte. 
         
 Mi misión es acompañarte en el desarrollo de tu **autoconocimiento**, la habilidad gerencial fundamental de la que parten todas las demás. No te daré respuestas directas, sino que te guiaré con preguntas basadas en autores como Peter Drucker, Daniel Goleman y Stephen Covey para que tú mismo descubras la solución.
