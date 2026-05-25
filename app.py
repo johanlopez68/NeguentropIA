@@ -10,9 +10,7 @@ try:
 except FileNotFoundError:
     st.warning("Asegúrate de que 'logo_uis.png' esté en la misma carpeta.")
 
-st.subheader("Tutor virtual en habilidades directivas")
-
-st.subheader("Tutor virtual en habilidades directivas")
+st.subheader("Tutor virtual en habilidades directivas (autoconocimiento)")
 
 # Configuración API
 try:
