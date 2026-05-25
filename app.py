@@ -55,6 +55,9 @@ if not st.session_state.perfil_completado:
         st.chat_message("assistant").markdown(bienvenida)
     
     if prompt := st.chat_input("Escribe tu nombre y objetivo..."):
+        # NUEVO: Guardamos el perfil en una variable persistente
+        st.session_state.perfil_usuario = prompt 
+        
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.markdown(prompt)
@@ -77,14 +80,21 @@ else:
         with st.chat_message("assistant"):
             with st.spinner("Analizando..."):
                 try:
-                    # Construimos el historial de la conversación
                     history_formatted = [
                         {"role": "user" if m["role"] == "user" else "model", "parts": [m["content"]]}
                         for m in st.session_state.messages[:-1]
                     ]
                     
                     chat = modelo.start_chat(history=history_formatted)
-                    full_prompt = f"{instrucciones_sistema}\n\nResponde al siguiente caso basándote en el perfil del usuario: {prompt}"
+                    
+                    # NUEVO: Recuperamos el perfil guardado e inyectamos la regla estricta en cada prompt
+                    perfil_guardado = st.session_state.perfil_usuario
+                    full_prompt = (
+                        f"{instrucciones_sistema}\n\n"
+                        f"Información del usuario: {perfil_guardado}\n"
+                        f"REGLA EXTRA: Inicia SIEMPRE tu respuesta dirigiéndote al usuario por su nombre extraído de la información anterior.\n\n"
+                        f"Caso a analizar: {prompt}"
+                    )
                     
                     response = chat.send_message(full_prompt)
                     st.markdown(response.text)
