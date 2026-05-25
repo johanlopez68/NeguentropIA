@@ -8,7 +8,7 @@ st.set_page_config(page_title="NeguentropIA", layout="centered")
 try:
     st.image("logo_uis.png", width=150)
 except:
-    st.warning("Asegúrate de tener 'logo_uis.png' en la carpeta.")
+    st.warning("Asegúrate de tener 'logo_uis.png' en la misma carpeta que este script.")
 
 st.title("NeguentropIA")
 st.subheader("Tutor virtual en habilidades directivas (autoconocimiento)")
@@ -54,7 +54,7 @@ Estructura tu respuesta final fluyendo de forma natural con:
 """
 
 # 4. Inicializar modelo
-modelo = genai.GenerativeModel("gemini-3.5-flash")
+modelo = genai.GenerativeModel("gemini-1.5-flash") # Actualizado a la versión más estable
 
 # 5. Gestión del estado de la conversación (onboarding)
 if "messages" not in st.session_state:
@@ -66,7 +66,7 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# Fase de Onboarding (humanización)
+# Fase de Onboarding (humanización e instrucciones)
 if not st.session_state.perfil_completado:
     if len(st.session_state.messages) == 0:
         bienvenida = "Hola, soy NeguentropIA. Para acompañarte mejor en tu proceso de autoconocimiento, ¿cuál es tu nombre y cuál es tu rol o principal objetivo profesional hoy?"
@@ -74,14 +74,30 @@ if not st.session_state.perfil_completado:
         st.chat_message("assistant").markdown(bienvenida)
     
     if prompt := st.chat_input("Escribe tu nombre y objetivo..."):
-        # NUEVO: Guardamos el perfil en una variable persistente
+        # Guardamos el perfil en una variable persistente
         st.session_state.perfil_usuario = prompt 
         
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.markdown(prompt)
         
-        mensaje_bienvenida = f"Un gusto saludarte. He registrado tu perfil: '{prompt}'. Mi misión es cuestionar tus certezas para fortalecer tu autoconocimiento. Comencemos. ¿Qué situación gerencial o dilema personal te gustaría analizar hoy?"
+        # Mensaje de bienvenida ampliado con casos de uso e instrucciones
+        mensaje_bienvenida = f"""¡Un gusto saludarte! He registrado tu perfil: '{prompt}'. 
+        
+Mi misión es ayudarte a desarrollar tu criterio gerencial. No te daré respuestas directas, sino que te guiaré con preguntas basadas en autores como Peter Drucker, Daniel Goleman y Stephen Covey.
+
+💡 **¿Para qué puedes usarme? (Casos de uso)**
+* **Conflictos interpersonales:** "Discutí con un compañero que no aporta nada".
+* **Dilemas de liderazgo:** "No sé cómo dar retroalimentación negativa sin desmotivar a mi equipo".
+* **Gestión personal y emocional:** "Me frustro mucho cuando cambian los planes a última hora".
+
+📌 **¿Cómo interactuar conmigo?**
+1. Escribe tu situación, reto o dilema actual con sinceridad.
+2. Lee mi breve análisis y responde a la pregunta de reflexión que te haré al final.
+3. Cuando sientas que ya comprendiste el concepto y sepas qué acciones tomar, dímelo (ej. *"listo, ya entendí"*) y cerraremos la sesión.
+
+¿Qué situación gerencial o dilema personal te gustaría analizar hoy?"""
+
         st.session_state.messages.append({"role": "assistant", "content": mensaje_bienvenida})
         with st.chat_message("assistant"):
             st.markdown(mensaje_bienvenida)
@@ -106,7 +122,7 @@ else:
                     
                     chat = modelo.start_chat(history=history_formatted)
                     
-                    # NUEVO: Recuperamos el perfil guardado e inyectamos la regla estricta en cada prompt
+                    # Recuperamos el perfil guardado e inyectamos la regla estricta en cada prompt
                     perfil_guardado = st.session_state.perfil_usuario
                     full_prompt = (
                         f"{instrucciones_sistema}\n\n"
@@ -119,4 +135,4 @@ else:
                     st.markdown(response.text)
                     st.session_state.messages.append({"role": "assistant", "content": response.text})
                 except Exception as e:
-                    st.error(f"Error técnico: {e}. Intenta recargar la página.")
+                    st.error(f"Error técnico: {e}. Intenta recargar la página o espera unos segundos si excediste el límite de peticiones.")
