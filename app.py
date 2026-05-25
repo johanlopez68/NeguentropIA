@@ -139,7 +139,7 @@ else:
                     full_prompt = (
                         f"{instrucciones_sistema}\n\n"
                         f"Información del usuario: {perfil_guardado}\n"
-                        f"REGLA EXTRA: Inicia SIEMPRE tu respuesta dirigiéndote al usuario por su nombre extraído de la información anterior.\n\n"
+                        f"REGLA EXTRA: Usa el nombre del usuario con naturalidad durante tu respuesta para mantener la cercanía, pero ESTÁ PROHIBIDO volver a saludar (nada de 'Hola', 'Un gusto', etc., ya se saludaron al inicio). Ve directo al diagnóstico y análisis.\n\n"
                         f"Caso a analizar: {prompt}"
                     )
                     
