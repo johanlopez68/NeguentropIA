@@ -80,11 +80,10 @@ if not st.session_state.perfil_completado:
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.markdown(prompt)
+      # Mensaje de bienvenida ampliado con enfoque en autoconocimiento
+        mensaje_bienvenida = """¡Un gusto saludarte! Gracias por presentarte. 
         
-        # Mensaje de bienvenida ampliado con casos de uso e instrucciones
-        mensaje_bienvenida = f"""¡Un gusto saludarte! He registrado tu perfil: '{prompt}'. 
-        
-Mi misión es ayudarte a desarrollar tu criterio gerencial. No te daré respuestas directas, sino que te guiaré con preguntas basadas en autores como Peter Drucker, Daniel Goleman y Stephen Covey.
+Mi misión es acompañarte en el desarrollo de tu **autoconocimiento**, la habilidad gerencial fundamental de la que parten todas las demás. No te daré respuestas directas, sino que te guiaré con preguntas basadas en autores como Peter Drucker, Daniel Goleman y Stephen Covey para que tú mismo descubras la solución.
 
 💡 **¿Para qué puedes usarme? (Casos de uso)**
 * **Conflictos interpersonales:** "Discutí con un compañero que no aporta nada".
@@ -96,7 +95,7 @@ Mi misión es ayudarte a desarrollar tu criterio gerencial. No te daré respuest
 2. Lee mi breve análisis y responde a la pregunta de reflexión que te haré al final.
 3. Cuando sientas que ya comprendiste el concepto y sepas qué acciones tomar, dímelo (ej. *"listo, ya entendí"*) y cerraremos la sesión.
 
-¿Qué situación gerencial o dilema personal te gustaría analizar hoy?"""
+¿Qué situación de autoconocimiento o dilema personal te gustaría analizar hoy?"""
 
         st.session_state.messages.append({"role": "assistant", "content": mensaje_bienvenida})
         with st.chat_message("assistant"):
