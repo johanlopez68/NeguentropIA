@@ -4,24 +4,24 @@ import google.generativeai as genai
 # 1. Configuración de página
 st.set_page_config(page_title="NeguentropIA", layout="centered")
 
-# --- SECCIÓN DE LOGOS ---
-# Creamos dos columnas para poner los logos uno al lado del otro
-col_logo1, col_logo2 = st.columns(2)
+# --- SECCIÓN DE LOGOS (Centrados y proporcionados) ---
+# Usamos 4 columnas para forzar a que los logos queden juntos en el centro
+espacio_izq, col_logo1, col_logo2, espacio_der = st.columns([1, 1.5, 1.5, 1])
 
-# Columna 1: Logo UIS
+# Columna central 1: Logo UIS
 with col_logo1:
     try:
-        st.image("logo_uis.png", width=150)
+        # use_container_width adapta la imagen al ancho de la columna
+        st.image("logo_uis.png", use_container_width=True)
     except:
         st.warning("Asegúrate de tener 'logo_uis.png' en la carpeta.")
 
-# Columna 2: Nuevo Logo NeguentropIA (Asegúrate de guardar la imagen con este nombre)
+# Columna central 2: Nuevo Logo NeguentropIA
 with col_logo2:
     try:
-        # He usado 'logo_neguentropia.png' como nombre de archivo sugerido
-        st.image("logo_neguentropia.png", width=150)
+        st.image("logo_neguentropia.png", use_container_width=True)
     except:
-        st.warning("Asegúrate de tener 'logo_neguentropia.png' en la carpeta para verlo aquí.")
+        st.warning("Asegúrate de tener 'logo_neguentropia.png' en la carpeta.")
 # ------------------------
 
 st.title("NeguentropIA")
@@ -68,7 +68,7 @@ Estructura tu respuesta final fluyendo de forma natural con:
 """
 
 # 4. Inicializar modelo
-modelo = genai.GenerativeModel("gemini-1.5-flash") # Usando la versión recomendada y estable
+modelo = genai.GenerativeModel("gemini-1.5-flash") 
 
 # 5. Gestión del estado de la conversación (onboarding)
 if "messages" not in st.session_state:
@@ -150,3 +150,14 @@ else:
                     st.session_state.messages.append({"role": "assistant", "content": response.text})
                 except Exception as e:
                     st.error(f"Error técnico: {e}. Intenta recargar la página o espera unos segundos si excediste el límite de peticiones.")
+
+# --- PIE DE PÁGINA (Footer) ---
+st.markdown(
+    """
+    <hr style="border: none; height: 1px; background-color: #e0e0e0; margin-top: 3rem; margin-bottom: 1rem;">
+    <p style="text-align: center; font-size: 12px; color: #888888;">
+        Creado por: Neguentrópicos (Johan López, Alejandra Díaz, Luis Vargas, Juan Salazar)
+    </p>
+    """,
+    unsafe_allow_html=True
+)
