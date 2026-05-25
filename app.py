@@ -69,7 +69,7 @@ Estructura tu respuesta final fluyendo de forma natural con:
 """
 
 # 4. Inicializar modelo
-modelo = genai.GenerativeModel("gemini-1.5-flash") 
+modelo = genai.GenerativeModel("gemini-3.5-flash") 
 
 # 5. Gestión del estado de la conversación (onboarding)
 if "messages" not in st.session_state:
