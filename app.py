@@ -49,32 +49,32 @@ Ejemplo de tono: "Detecto una reacción defensiva que, según la teoría de meca
 # 5. Inicializar modelo
 modelo = genai.GenerativeModel(model_name="gemini-1.5-pro")
 
-# 6. Carga de Documentos
+# 1. Ajusta la función para que no cree conflictos de caché si falla
 @st.cache_resource
 def preparar_conocimiento():
-    # Nombres exactos según tu lista
     nombres = [
         "7 hábitos de la gente altamente efectiva.pdf",
         "DIV - Desarrollo_de_habilidades_directivas_8Ed_Whettn&Cameron-82-108.pdf",
+        "El_Autoconocimiento_como_Habilidad_Geren.pdf",
         "Gestionarse a sí mismo (PETER DRUCKER).pdf",
-        "Qué hace a un líder (DANIEL GOLEMAN).pdf"
+        "Qué hace a un líder (DANIEL GOLEMAN).pdf" # Revisa que este nombre coincida EXACTAMENTE con tu GitHub
     ]
     archivos_cargados = []
     for nombre in nombres:
         if os.path.exists(nombre):
-            archivo = genai.upload_file(path=nombre)
-            archivos_cargados.append(archivo)
+            archivos_cargados.append(genai.upload_file(path=nombre))
     return archivos_cargados
 
-# 7. Inicio del Chat
+# 2. Ajusta la inicialización del chat
 if "chat_history" not in st.session_state:
-    try:
-        docs = preparar_conocimiento()
-        st.session_state.chat_history = modelo.start_chat(
-            history=[{"role": "user", "parts": docs + [instrucciones_sistema]}]
-        )
-    except Exception as e:
-        st.error(f"Error al cargar documentos: {e}")
+    docs = preparar_conocimiento()
+    
+    # Creamos un mensaje inicial que contenga los documentos
+    # Esto evita el error de "Not Found" al intentar llamar archivos que expiraron
+    st.session_state.chat_history = modelo.start_chat(history=[])
+    st.session_state.chat_history.send_message(
+        [instrucciones_sistema] + docs + ["Inicia la conversación como NeguentropIA."]
+    )
 
 # 8. Interfaz de Chat
 for mensaje in st.session_state.chat_history.history:
