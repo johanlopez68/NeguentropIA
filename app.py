@@ -1,45 +1,63 @@
 import streamlit as st
 import google.generativeai as genai
 
+# 1. Configuración de página
 st.set_page_config(page_title="NeguentropIA", layout="centered")
 
-st.title("NeguentropIA")
-# Inserta el logo aquí
+# Logo UIS
 try:
     st.image("logo_uis.png", width=150)
-except FileNotFoundError:
-    st.warning("Asegúrate de que 'logo_uis.png' esté en la misma carpeta.")
+except:
+    st.warning("Asegúrate de tener el archivo 'logo_uis.png' en la carpeta.")
 
-st.subheader("Tutor virtual en habilidades directivas (autoconocimiento)")
+st.title("NeguentropIA")
+st.subheader("Tutor virtual en habilidades directivas")
 
-# Configuración API
+# 2. Configuración API Key (usando Secrets de Streamlit)
 try:
     genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
 except:
-    st.error("Configura GOOGLE_API_KEY en los Secrets.")
+    st.error("Error: Configura 'GOOGLE_API_KEY' en los Secrets de Streamlit.")
     st.stop()
 
-# Configuración del modelo
-model = genai.GenerativeModel("gemini-1.5-flash")
+# 3. Prompt del sistema (Base de conocimiento integrada)
+# Esta versión inyecta el conocimiento directamente para evitar errores de red
+instrucciones_sistema = """
+Eres NeguentropIA, un tutor experto en autoconocimiento gerencial basado en los siguientes pilares teóricos:
+1. Whetten & Cameron: Las 5 dimensiones del autoconocimiento (inteligencia emocional, valores, estilo cognoscitivo, actitud ante el cambio, autoevaluación).
+2. Peter Drucker: Gestión de fortalezas y feedback.
+3. Daniel Goleman: Inteligencia emocional y liderazgo.
+4. Stephen Covey: Proactividad vs. Reactividad.
+5. Powell y Rodríguez: Mecanismos de defensa.
 
-# Historial simple de mensajes para mostrar
+Reglas obligatorias:
+* No des respuestas directas. Usa preguntas socráticas para retar al usuario.
+* Fundamenta cada respuesta citando a uno de los autores mencionados.
+* Estructura tu respuesta siempre en: 1. Diagnóstico breve, 2. Análisis teórico, 3. Pregunta de autoconocimiento.
+* Escribe solo la primera letra en mayúscula para frases (no uses mayúsculas sostenidas).
+"""
+
+# 4. Inicializar modelo estable
+modelo = genai.GenerativeModel(model_name="gemini-1.5-pro")
+
+# 5. Gestión del estado de la conversación
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Mostrar historial previo
+# 6. Interfaz de Chat
+# Mostrar historial
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# Captura de input del usuario
-if prompt := st.chat_input("Describe tu caso gerencial..."):
+# Capturar input del usuario
+if prompt := st.chat_input("Describe tu caso gerencial aquí..."):
     # Guardar y mostrar mensaje del usuario
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # Reconstrucción de la sesión para evitar el error NotFound
-    # Enviamos todo el historial al modelo en cada interacción
+    # Reconstrucción de la sesión para evitar errores de red
     with st.chat_message("assistant"):
         with st.spinner("Analizando..."):
             try:
@@ -49,11 +67,11 @@ if prompt := st.chat_input("Describe tu caso gerencial..."):
                     for m in st.session_state.messages[:-1]
                 ]
                 
-                chat = model.start_chat(history=history_formatted)
+                chat = modelo.start_chat(history=history_formatted)
                 
-                # Instrucción de sistema inyectada en el primer mensaje
+                # Inyección de instrucciones en la primera interacción
                 if len(st.session_state.messages) == 1:
-                    full_prompt = f"Actúa como NeguentropIA (Tutor experto en autoconocimiento gerencial basado en Whetten & Cameron, Drucker, Goleman, Covey y Powell). Instrucciones: No des respuestas directas, usa preguntas socráticas, estructura tu respuesta en: 1. Diagnóstico, 2. Análisis, 3. Pregunta socrática. Responde al siguiente caso: {prompt}"
+                    full_prompt = f"{instrucciones_sistema}\n\nResponde al siguiente caso: {prompt}"
                 else:
                     full_prompt = prompt
 
