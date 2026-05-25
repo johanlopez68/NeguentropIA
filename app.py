@@ -4,22 +4,23 @@ import google.generativeai as genai
 # 1. Configuración de página
 st.set_page_config(page_title="NeguentropIA", layout="centered")
 
-# --- SECCIÓN DE LOGOS (Centrados y proporcionados) ---
-# Usamos 4 columnas para forzar a que los logos queden juntos en el centro
-espacio_izq, col_logo1, col_logo2, espacio_der = st.columns([1, 1.5, 1.5, 1])
+# --- SECCIÓN DE LOGOS (Tamaños fijos ajustados) ---
+# Usamos columnas asimétricas para que el logo de la UIS (rectangular) tenga más espacio
+espacio_izq, col_logo1, col_logo2, espacio_der = st.columns([0.5, 1.5, 1, 0.5])
 
 # Columna central 1: Logo UIS
 with col_logo1:
     try:
-        # use_container_width adapta la imagen al ancho de la columna
-        st.image("logo_uis.png", use_container_width=True)
+        # Le damos un tamaño mayor en píxeles porque es rectangular
+        st.image("logo_uis.png", width=200)
     except:
         st.warning("Asegúrate de tener 'logo_uis.png' en la carpeta.")
 
 # Columna central 2: Nuevo Logo NeguentropIA
 with col_logo2:
     try:
-        st.image("logo_neguentropia.png", use_container_width=True)
+        # Lo hacemos más pequeño en píxeles para que no se vea gigante a lo alto
+        st.image("logo_neguentropia.png", width=120)
     except:
         st.warning("Asegúrate de tener 'logo_neguentropia.png' en la carpeta.")
 # ------------------------
@@ -88,14 +89,12 @@ if not st.session_state.perfil_completado:
         st.chat_message("assistant").markdown(bienvenida)
     
     if prompt := st.chat_input("Escribe tu nombre y objetivo..."):
-        # Guardamos el perfil en una variable persistente
         st.session_state.perfil_usuario = prompt 
         
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.markdown(prompt)
       
-        # Mensaje de bienvenida ampliado con enfoque en autoconocimiento
         mensaje_bienvenida = """¡Un gusto saludarte! Gracias por presentarte. 
         
 Mi misión es acompañarte en el desarrollo de tu **autoconocimiento**, la habilidad gerencial fundamental de la que parten todas las demás. No te daré respuestas directas, sino que te guiaré con preguntas basadas en autores como Peter Drucker, Daniel Goleman y Stephen Covey para que tú mismo descubras la solución.
@@ -136,7 +135,6 @@ else:
                     
                     chat = modelo.start_chat(history=history_formatted)
                     
-                    # Recuperamos el perfil guardado e inyectamos la regla estricta en cada prompt
                     perfil_guardado = st.session_state.perfil_usuario
                     full_prompt = (
                         f"{instrucciones_sistema}\n\n"
