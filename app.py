@@ -11,7 +11,7 @@ except:
     st.warning("Asegúrate de tener 'logo_uis.png' en la carpeta.")
 
 st.title("NeguentropIA")
-st.subheader("Tutor virtual en habilidades directivas")
+st.subheader("Tutor virtual en habilidades directivas autoconocimiento")
 
 # 2. Configuración API Key (usando Secrets de Streamlit)
 try:
