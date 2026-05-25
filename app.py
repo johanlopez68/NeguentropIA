@@ -12,7 +12,7 @@ except:
     st.warning("Asegúrate de tener el archivo 'logo_uis.png' en la carpeta.")
 
 st.title("NeguentropIA")
-st.subheader("Tutor virtual en habilidades directivas")
+st.subheader("Tutor virtual en habilidades directivas (autoconocimiento)")
 
 # 3. Configuración segura de la API (usando st.secrets)
 try:
