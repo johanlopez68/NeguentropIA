@@ -38,8 +38,7 @@ Reglas obligatorias:
 """
 
 # 4. Inicializar modelo estable
-modelo = genai.GenerativeModel(model_name="gemini-1.5-flash")
-modelo = genai.GenerativeModel("models/gemini-1.5-flash")
+modelo = genai.GenerativeModel("gemini-3.5-flash")
 
 # 5. Gestión del estado de la conversación
 if "messages" not in st.session_state:
